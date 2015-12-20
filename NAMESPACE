@@ -1,0 +1,19 @@
+export(CNmixt,whichBest,getIC,getBestModel,getPosterior,getSize,getCluster,
+       getPar,agree,getDetection,dCN,rCN)
+  
+
+
+importFrom("grDevices", "rgb")
+  importFrom("graphics", "axis", "box", "contour", "pairs", "par",
+             "plot", "text")
+  importFrom("stats", "dnorm", "kmeans", "mahalanobis", "optimize",
+             "rbinom", "rmultinom", "runif")
+import(mixture, mnormt, parallel)
+S3method(summary,ContaminatedMixt)
+S3method(print,ContaminatedMixt)
+S3method(plot,ContaminatedMixt)
+S3method(print,ContaminatedMixt)
+S3method(pairs,ContaminatedMixt)
+S3method(print,ContaminatedMixt.IC)
+
+
