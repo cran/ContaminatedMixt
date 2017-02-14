@@ -1,19 +1,22 @@
 export(CNmixt,whichBest,getIC,getBestModel,getPosterior,getSize,getCluster,
-       getPar,agree,getDetection,dCN,rCN)
+       getPar,agree,getDetection,dCN,rCN,m.step,CNpredict,getCV,whichBestCV,
+       CNmixtCV)
   
-
-
+#importFrom("mclust","classError")
+importFrom("caret","createFolds")
 importFrom("grDevices", "rgb")
-  importFrom("graphics", "axis", "box", "contour", "pairs", "par",
+importFrom("graphics", "axis", "box", "contour", "pairs", "par",
              "plot", "text")
-  importFrom("stats", "dnorm", "kmeans", "mahalanobis", "optimize",
+importFrom("stats", "dnorm", "kmeans", "mahalanobis", "optimize",
              "rbinom", "rmultinom", "runif")
-import(mixture, mnormt, parallel)
+importFrom("mvtnorm","dmvnorm")
+import(mixture, mnormt, parallel,mclust)
+S3method(predict,ContaminatedMixt)
 S3method(summary,ContaminatedMixt)
 S3method(print,ContaminatedMixt)
 S3method(plot,ContaminatedMixt)
 S3method(print,ContaminatedMixt)
 S3method(pairs,ContaminatedMixt)
 S3method(print,ContaminatedMixt.IC)
-
-
+S3method(print,ContaminatedMixt.CV)
+useDynLib(ContaminatedMixt)

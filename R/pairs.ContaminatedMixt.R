@@ -1,9 +1,7 @@
 pairs.ContaminatedMixt <- function(x, criterion = "BIC", ...){
   
-  criterion <- match.arg(criterion,.ICnames())
+  criterion <- match.arg(criterion,.ICnames(x$models[[1]]))
   res <- getBestModel(x,criterion=criterion)$models[[1]]
-  
-  
   n <- res$n
   groups <- numeric(n)
   for(i in 1:n){    

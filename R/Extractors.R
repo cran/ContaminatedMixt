@@ -1,7 +1,5 @@
-.ICnames <- function(x=NULL){
-  v <- c("AIC", "AICc", "AICu", "AIC3", "AWE","BIC", "CAIC", "ICL")
-  if (is.null(x)) return(v)
-  else return (v[x])
+.ICnames <- function(x){
+  names(x$IC)
 }
 .ModelNames <- function (model){
   type <- switch(EXPR = as.character(model), E = "univariate, equal variance", 
@@ -20,8 +18,8 @@
 }
 getIC <- function(object,criteria){
   if (!is.null(object$models)){
-  if(missing(criteria)) criteria <- .ICnames()
-  else criteria <- match.arg(criteria, .ICnames(),several.ok =TRUE) 
+  if(missing(criteria)) criteria <- .ICnames(object$models[[1]])
+  else criteria <- match.arg(criteria, .ICnames(object$models[[1]]),several.ok =TRUE) 
   lc <- length(criteria)
   lm <- length(object$models)
   res <- matrix(NA,lm,lc,dimnames=list(1:length(object$models),criteria))
@@ -29,6 +27,7 @@ getIC <- function(object,criteria){
   for(i in 1:lm){
     obj <- object$models[[i]]
     if (!is.null(obj$IC)) res[i,] <- sapply(1:lc, FUN=function(j) obj$IC[[criteria[j]]])
+    df$contamination[i] = obj$contamination
     df$G[i] <- obj$G
     if(!is.null(obj$model)) df$model[i] <- as.character(obj$model)
   }
@@ -40,13 +39,13 @@ getIC <- function(object,criteria){
 print.ContaminatedMixt.IC <- function(x, digits = max(3L, getOption("digits") - 2L),...){
   class(x) <-"matrix"
   d <- data.frame(x)
-  d <- data.frame(model= attributes(x)$model,G = attributes(x)$G,d)
+  d <- data.frame(model= attributes(x)$model,contam.=attributes(x)$contamination,G = attributes(x)$G,d)
   print(d,digits=digits) 
 }
-getBestModel <- function(object,criterion="BIC",G=NULL,model=NULL){
+getBestModel <- function(object,criterion="BIC",G=NULL,model=NULL,contamination=NULL){
   #if(!class(object)=="ContaminatedMixt") stop("object is not a class ContaminatedMixt object")
-  criterion <- match.arg(criterion,.ICnames())
-  n <- whichBest(object=object,criteria=criterion,G=G,model=model)
+  criterion <- match.arg(criterion,.ICnames(object$models[[1]]))
+  n <- whichBest(object=object,criteria=criterion,G=G,model=model,contamination=contamination)
   if (length(n)>1) stop("More than one model matches the conditions specified.")
   foo <- object$models[[n]]
   object$models <- NULL
@@ -54,17 +53,18 @@ getBestModel <- function(object,criterion="BIC",G=NULL,model=NULL){
   invisible(object)
 }
 
-whichBest <- function(object, criteria=NULL, G=NULL, model=NULL){
+whichBest <- function(object, criteria=NULL, G=NULL, model=NULL, contamination=NULL){
   #returns the best model(s) according to one or more information criteria.
-  if(is.null(criteria)) criteria <- .ICnames()
-  else criteria <- match.arg(criteria, .ICnames(),several.ok =TRUE)
+  if(is.null(criteria)) criteria <- .ICnames(object$models[[1]])
+  else criteria <- match.arg(criteria, .ICnames(object$models[[1]]),several.ok =TRUE)
   a <- getIC(object,criteria)
   w <- TRUE
   if(!is.null(G))  w <- w & attr(a,"G") %in% G
   if(!is.null(model))  w <- w & attr(a,"model") %in% model
+  if(!is.null(contamination))  w <- w & attr(a,"contamination") %in% contamination
   a <-a[w,,drop=FALSE]
   if (!any(w)) stop("No model matches the conditions specified.")
-  best <- strtoi(rownames(a)[sapply(1:length(criteria), function (i) which(t(a[,i])==max(a[,i], na.rm =TRUE)))])
+  best <- strtoi(rownames(a)[sapply(1:length(criteria), function (i) which.max(t(a[,i])))])
   names(best) <- criteria
   best
 }
@@ -87,4 +87,33 @@ getPosterior<- function(object, ...){
 getSize<- function(object, ...){
   best <- getBestModel(object,...)
   table(best$models[[1]]$group)
+}
+
+whichBestCV<- function(object, G=NULL, model=NULL, contamination=NULL){
+  a <- getCV(object)
+  w <- TRUE
+  if(!is.null(G))  w <- w & attr(a,"G") %in% G
+  if(!is.null(model))  w <- w & attr(a,"model") %in% model
+  if(!is.null(contamination))  w <- w & attr(a,"contamination") %in% contamination
+  a <-a[w,,drop=FALSE]
+  if (!any(w)) stop("No model matches the conditions specified.")
+  best <- which(t(a[,1])==min(a[,1], na.rm =TRUE))
+  best
+}
+getCV <- function(object){
+  if (!is.null(object$models)){
+    lm <- length(object$models)
+    res <- matrix(NA,lm,1,dimnames=list(1:length(object$models),"CV"))
+    df <- data.frame(G=1:lm)
+    for(i in 1:lm){
+      obj <- object$models[[i]]
+      df$contamination[i] = obj$contamination
+      res[i,] <- obj$mean_error
+      df$G[i] <- obj$G
+      if(!is.null(obj$model)) df$model[i] <- as.character(obj$model)
+    }
+    attributes(res) <- c(attributes(res),df)
+    class(res) <- "ContaminatedMixt.IC"
+    res
+  }
 }

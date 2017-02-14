@@ -26,7 +26,7 @@ A contingency table.
 }
 
 \references{
-Punzo, A. and McNicholas, P. D. (2015). Parsimonious mixtures of contaminated Gaussian distributions with application to allometric studies. \emph{arXiv.org} e-print \bold{1305.4669}, available at: \url{http://arxiv.org/abs/1305.4669}.
+Punzo, A. and McNicholas, P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, DOI: 10.1002/bimj.201500144.
 }
 \author{
 Antonio Punzo, Angelo Mazza, Paul D. McNicholas 

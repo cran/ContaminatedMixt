@@ -6,9 +6,11 @@ print.ContaminatedMixt <- function(x,...){
       if (length(x$models)>1){
         b <- best==best.unique[i]        
         m <- paste(names(best)[b],collapse=", ")
-        m <- paste("\nBest model according to", m, "has")
-      } else m <- "\nEstimated one model with"
-      m <- paste(m, "G =", x$models[[best.unique[i]]]$G,"group(s)")
+        m <- paste("\nBest model according to", m, "is")
+      } else m <- "\nThe model estimated is"
+      m <- paste0(m, ifelse(x$models[[best.unique[i]]]$contamination,
+                           " contaminated"," uncontaminated"),", with")
+      m <- paste(m, "G =", x$models[[best.unique[i]]]$G,"group(s),")
       if (!is.null(x$models[[best.unique[[i]]]]$model)) 
         m <- paste(m, "and parsimonious structure",  x$models[[best.unique[[i]]]]$model)
            

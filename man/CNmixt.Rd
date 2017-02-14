@@ -1,5 +1,6 @@
 \name{CNmixt}
 \alias{CNmixt}
+\alias{CNmixtCV}
 \title{Fitting for the Parsimonious Mixtures of Contaminated Normal Distributions}
 \description{
 Fits, by using the expectation conditional-maximization (ECM) algorithm, parsimonious mixtures of multivariate contaminated normal distributions (with eigen-decomposed scale matrices) to the given data within a clustering paradigm (default) or classification paradigm. 
@@ -7,21 +8,26 @@ Can be run in parallel.
 Likelihood-based model selection criteria are used to select the parsimonious model and the number of groups.
 }
 \usage{
-CNmixt(X, G, model = NULL, initialization = "mixt",
-   alphafix = NULL, alphamin = 0.5, etafix = NULL, etamax = 1000,
+CNmixt(X, G, contamination = NULL, model = NULL,
+   initialization = "mixt", alphafix = NULL, alphamin = 0.5, 
    seed = NULL, start.z = NULL, start.v = NULL, start = 0,
-   ind.label = NULL, label = NULL, iter.max = 1000, threshold = 1.0e-03, 
+   label = NULL, AICcond = FALSE, iter.max = 1000, 
+   threshold = 1.0e-03, parallel = FALSE, eps = 1e-100)
+CNmixtCV(X, G, contamination = NULL, model = NULL,
+   initialization = "mixt", k = 10,alphafix = NULL, 
+   alphamin = 0.5, seed = NULL, start.z = NULL, start.v = NULL, 
+   start = 0, label = NULL, iter.max = 1000, threshold = 1.0e-03, 
    parallel = FALSE, eps = 1e-100)  
-}
-                 
+}                 
 %- maybe also 'usage' for other objects documented here.
 \arguments{                      
   \item{X}{
-  a matrix or data frame such that \eqn{n} rows correspond to observations and \eqn{p} columns correspond to variables. 
-  Note that this function currently only works with multivariate data (\eqn{p > 1}).
+  a \code{dim=c(n,p)} matrix such that the \eqn{n} rows correspond to observations and the \eqn{p} columns correspond to variables. 
   }
   \item{G}{
   a vector containing the numbers of groups to be tried. 
+  }  
+  \item{contamination}{an optional boolean indicating if the model(s) to be fitted have to be contaminated or not. If \code{NULL}, then both types of models are fitted.
   }
   \item{model}{
   a vector indicating the model(s) to be fitted.
@@ -32,11 +38,11 @@ CNmixt(X, G, model = NULL, initialization = "mixt",
   initialization strategy for the ECM algorithm. 
   It can be:
   \itemize{
-    \item \code{"mixt"} (default): the initial (\eqn{n \times G}) soft classification matrix (of posterior probabilities of groups membership) arises from a preliminary run of mixtures of multivariate normal distributions as fitted by the \code{gpcm()} function of the \pkg{mixture} package (see \code{\link[mixture:gpcm]{mixture:gpcm}} for details).
+    \item \code{"mixt"} (default): the initial (\eqn{n \times G}) matrix with posterior probabilities of groups membership arises from a preliminary run of mixtures of multivariate normal distributions as fitted by the \code{gpcm()} function of the \pkg{mixture} package (see \code{\link[mixture:gpcm]{mixture:gpcm}} for details).
     \item \code{"kmeans"}: the initial (\eqn{n \times G}) hard classification matrix arises from a preliminary run of the \eqn{k}-means algorithm;
-    \item \code{"random.soft"}: the initial (\eqn{n \times G}) soft classification matrix (of posterior probabilities of groups membership) is randomly generated; 
-    \item \code{"random.hard"}: the initial (\eqn{n \times G}) hard classification classification matrix is randomly generated;
-    \item \code{"manual"}: the user must specify the initial (\eqn{n \times G}) soft/hard classification matrix, via the argument \code{start.z} and, optionally, the initial (\eqn{n \times G}) matrix of posterior probabilities to be a good observation in each group, via the argument \code{start.v}.    
+    \item \code{"random.post"}: the initial (\eqn{n \times G}) matrix with posterior probabilities of groups membership is randomly generated; 
+    \item \code{"random.clas"}: the initial (\eqn{n \times G}) classification matrix is randomly generated;
+    \item \code{"manual"}: the user must specify either the initial (\eqn{n \times G}) classification matrix or the initial (\eqn{n \times G}) matrix with posterior probabilities of groups membership, via the argument \code{start.z} and, optionally, the initial (\eqn{n \times G}) matrix of posterior probabilities to be a good observation in each group, via the argument \code{start.v}.    
   	}
   }
   \item{alphafix}{
@@ -48,17 +54,6 @@ CNmixt(X, G, model = NULL, initialization = "mixt",
   a vector of length \eqn{G} with the minimum proportion of good observations in each group.  
   If \code{length(alphamin) != G}, then the first element is replicated \eqn{G} times.
   Default value is \code{0.5}. 
-  }
-  \item{etafix}{a vector of length \eqn{G} with the
-  values of the contamination parameter to be considered in the estimation phase for each group. 
-  If \code{length(etafix) != G}, then the first element is replicated \eqn{G} times. 
-	Default value is \code{NULL}.
-  }
-
-  \item{etamax}{a vector of length \eqn{G} with the
-  maximum value for the contamination parameter to be considered in the estimation phase for each group when \code{etafix} is \code{NULL}. 
-	If \code{length(etamax) != G}, then the first element is replicated \eqn{G} times.
-	Default value is \code{1000}.
   }
   \item{seed}{
   the seed for the random number generator, when random initializations are used; if \code{NULL}, current seed is not changed. 
@@ -75,12 +70,14 @@ CNmixt(X, G, model = NULL, initialization = "mixt",
   \item{start}{
   when \code{initialization = "mixt"}, initialization used for the \code{gpcm()} function of the \pkg{mixture} package (see \code{\link[mixture:gpcm]{mixture:gpcm}} for details). 
   }
-  \item{ind.label}{
-  vector of positions (rows) of the labeled observations. 
-  }
   \item{label}{
-  vector, of the same dimension as \code{ind.label}, with the group of membership of the observations indicated by \code{ind.label}. 
-  }
+  a vector of integers of length equal to the number of rows of \code{X}. 
+	It indicates the known group of membership of each observation. 
+	Use \code{0} when membership is not known. 
+	Use \code{NULL} when membership is unknown for all observations.}
+  \item{AICcond}{When \code{TRUE}, the AICcond criterion, an estimate of the predictive ability of a generative model for classification, is computed (Vandewalle et al., 2013).  
+   }
+  
   \item{iter.max}{
   maximum number of iterations in the ECM algorithm. 
 	Default value is \code{1000}. 
@@ -99,12 +96,13 @@ CNmixt(X, G, model = NULL, initialization = "mixt",
   It sets the smallest value for the eigenvalues of the component scale matrices. 
   Default value is \code{1e-100}.
 }
-
+	\item{k}{number of equal sized subsamples used in \eqn{k}-fold cross-validation.
+}
 }
 \details{
-The multivariate data contained in \code{X} are either clustered or classified using parsimonious mixtures of multivariate contaminated normal distributions with some or all of the 14 parsimonious models described in Punzo and McNicholas (2015).
+The multivariate data contained in \code{X} are either clustered or classified using parsimonious mixtures of multivariate contaminated normal distributions with some or all of the 14 parsimonious models described in Punzo and McNicholas (2016). 
 Model specification (via the \code{model} argument) follows the nomenclature popularized in other packages such as \pkg{mixture} and \pkg{mclust}.  
-Such a nomenclature refers to the decomposition and constraints on the scale matrix (see Banfield and Raftery, 1993, Celeux and Govaert, 1995 and Punzo and McNicholas, 2015 for details): 
+Such a nomenclature refers to the decomposition and constraints on the scale matrix (see Banfield and Raftery, 1993, Celeux and Govaert, 1995 and Punzo and McNicholas, 2016 for details): 
 \deqn{\Sigma_g = \lambda_g \Gamma_g \Delta_g \Gamma_g'.}
 The nomenclature describes (in order) the volume (\eqn{\lambda_g}), shape (\eqn{\Delta_g}), and orientation (\eqn{\Gamma_g}), in terms of \code{"V"}ariable, \code{"E"}qual, or the \code{"I"}dentity matrix. 
 As an example, the string \code{"VEI"} would refer to the model where \eqn{\Sigma_g = \lambda_g \Delta}.
@@ -116,35 +114,11 @@ For \code{"EVE"} and \code{"VVE"}, majorization-minimization (MM) algorithms (Hu
 
 Starting values are very important to the successful operation of these algorithms and so care must be taken in the interpretation of results.
 All the initializations considered here provide initial quantities for the first CM-step of the ECM algorithm.
+The predictive ability of a model for classification may be estimated using the cross-validated error rate, returned by \code{CNmixtCV} or trough the the AICcond criterion (Vandewalle et al., 2013).
 }
 \value{
-An object of class \code{ContaminatedMixt} is a list with components:
-	\item{call}{an object of class \code{call}}
-	\item{best}{a data frame with the best number of mixture components (first column) and the best model (second column) with respect to the two model selection criteria adopted (BIC and ICL)}
-	\item{bestBIC,bestICL}{for the best BIC and ICL models, these are two lists (of the same type) with components:
-		\itemize{
-		\item \code{modelname}: the name of the best model.
-		\item \code{npar}: number of free parameters.
-		\item \code{X}: matrix of data.
-		\item \code{G}: number of mixture components.
-		\item \code{p}: number of variables.
-		\item \code{prior}: weights for the mixture components.
-		\item \code{priorgood}: weights for the good observations in each of the \code{k} groups.
-		\item \code{mu}: component means.
-		\item \code{Sigma}: component covariance matrices for the good observations.
-		\item \code{eta}: component contamination parameters.	
-		\item \code{iter.stop}: final iteration of the ECM algorithm.
-		\item \code{z}: matrix with posterior probabilities for the outer groups.
-		\item \code{v}: matrix with posterior probabilities for the inner groups.
-		\item \code{ind.label}: vector of positions (rows) of the labeled observations.
-		\item \code{label}: vector, of the same dimension as \code{ind.label}, with the group of membership of the observations indicated by \code{ind.label}.	
-		\item \code{group}: vector of integers indicating the maximum a posteriori classifications for the best model.
-		\item \code{loglik}: log-likelihood value of the best model.	
-		\item \code{BIC}: BIC value	
-		\item \code{ICL:} ICL value	
-		\item \code{call}: an object of class \code{call} for the best model.
-		}		
-	}
+\code{CNmixt} returns an object of class \code{ContaminatedMixt}.
+\code{CNmixtCV} returns a list with the cross-validated error rate estimated for each model. 
 }
 
 \references{
@@ -163,7 +137,10 @@ Celeux, G. and Govaert, G. (1995). Gaussian Parsimonious Clustering Models. \emp
 
 Hunter, D. R. and Lange, K. (2000). Rejoinder to Discussion of ``Optimization Transfer Using Surrogate Objective Functions''. \emph{Journal of Computational and Graphical Statistics}, \bold{9}(1), 52--59.
 
-Punzo, A. and McNicholas, P. D. (2015). Parsimonious mixtures of contaminated Gaussian distributions with application to allometric studies. \emph{arXiv.org} e-print \bold{1305.4669}, available at: \url{http://arxiv.org/abs/1305.4669}.
+Punzo, A. and McNicholas, P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, DOI: 10.1002/bimj.201500144.
+
+Vandewalle V., Biernacki C., Celeux G., Govaert, G. (2013). A predictive deviance criterion for selecting a generative
+model in semi-supervised classification. \emph{Computational Statistics and Data Analysis}, \bold{64}, 220--236.
 }
 \author{
 Antonio Punzo, Angelo Mazza, Paul D. McNicholas 
@@ -213,8 +190,10 @@ plot(res1, contours = TRUE, asp = 1, xlab = expression(X[1]), ylab = expression(
 # -------------------------- #
 
 indlab <- sample(1:400, 20)
-lab <- group[indlab]
-res2 <- CNmixt(X, G = 2, model = "EEI", ind.label = indlab, label = lab)
+lab <- rep(0,nrow(X))
+lab[indlab] <- group[indlab]
+res2 <- CNmixt(X, G = 2, model = "EEI", label = lab)
+
 
 agree(res2, givgroup = group)
 

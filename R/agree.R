@@ -1,19 +1,9 @@
 agree <- function(object, givgroup, criterion = "BIC"){
-
-  pmcgd <- object
-  
-  criterion <- match.arg(criterion,.ICnames())
+  criterion <- match.arg(criterion,.ICnames(object$models[[1]]))
   best <- getBestModel(object,criterion=criterion)
   res <- best$models[[1]]
-  
-  
-  n <- res$n
-  obs <- 1:n
-  ind.lab <- res$ind.label
-  if(is.null(ind.lab))
-    ind.unlab <- obs
-  if(!is.null(ind.lab)) 
-    ind.unlab <- obs[-ind.lab]
+  ind.lab <- (1:res$n)[res$label != 0]
+  ind.unlab <- (1:res$n)[res$label == 0]
   nunlab <- length(ind.unlab)
   
   #if(length(givgroup) != n) 
@@ -28,9 +18,10 @@ agree <- function(object, givgroup, criterion = "BIC"){
     else
       groups[cont] <- paste("",res$group[i],sep=" ")     
   }
-  if(is.null(ind.lab))
-    return(table(givgroup, groups))
-  if(!is.null(ind.lab))
-    return(table(givgroup[-ind.lab], groups))
+  dnn=c("givgroup","groups")
+  if(length(ind.lab)==0)
+    return(table(givgroup, groups,dnn=dnn))
+  else
+    return(table(givgroup[-ind.lab], groups,dnn=dnn))
   
 }

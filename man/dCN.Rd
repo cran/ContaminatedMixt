@@ -26,7 +26,7 @@ a symmetric positive-definite matrix representing the scale matrix of the distri
 proportion of good observations; it must be a number between 0 and 1
 }
   \item{eta}{
-degree of contamination; it should be a number greater then 1
+degree of contamination; it should be a number greater than 1
 }
   \item{n}{
 the number of random vectors to be generated
@@ -37,7 +37,7 @@ the number of random vectors to be generated
 }
 
 \references{
-Punzo, A. and McNicholas, P. D. (2013). Robust Clustering via Parsimonious Mixtures of Contaminated Gaussian Distributions. \emph{arXiv.org} e-print \bold{1305.4669}, available at: \url{http://arxiv.org/abs/1305.4669}.
+Punzo, A. and McNicholas, P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, DOI: 10.1002/bimj.201500144.
 }
 \author{
 Antonio Punzo, Angelo Mazza, Paul D. McNicholas 

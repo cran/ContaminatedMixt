@@ -1,6 +1,6 @@
 summary.ContaminatedMixt <-function(object,criterion="BIC", digits = getOption("digits")-2, ...)
 {
-  criterion <- match.arg(criterion,.ICnames())
+  criterion <- match.arg(criterion,.ICnames(object$models[[1]]))
   best <- getBestModel(object,criterion=criterion,...)
   obj <- best$models[[1]]
   title1 <- paste0("Best fitted model according to ",criterion)
@@ -26,7 +26,7 @@ summary.ContaminatedMixt <-function(object,criterion="BIC", digits = getOption("
   #
   
   if(!is.null(obj$model)){
-    cat("Model: ", as.character(obj$model), " (", .ModelNames(obj$model)$type, 
+    cat("Model: ", ifelse(obj$contamination,"Contaminated ","Uncontaminated "), as.character(obj$model), " (", .ModelNames(obj$model)$type, 
         ") with ", obj$G, ifelse(obj$G > 1, " components\n", " component\n"),
         sep="")
     cat("\n")
@@ -42,16 +42,13 @@ summary.ContaminatedMixt <-function(object,criterion="BIC", digits = getOption("
       cat(paste0("  Component ",i,"\n"))
       print(obj$Sigma[,,i], digits = digits) 
     }
-    cat("\n Alpha\n")
-    cat(best$models[[1]]$alpha)
-    cat("\n\n Eta\n")
-    cat(eta=best$models[[1]]$eta)
-    
+    if(obj$contamination){ 
+      cat("\n Alpha\n")
+      print(best$models[[1]]$alpha, digits = digits)
+      cat("\n Eta\n")
+      print(best$models[[1]]$eta, digits = digits)
+    }
     
     cat("\n")
   }
-  
-  
-  
- 
 }
