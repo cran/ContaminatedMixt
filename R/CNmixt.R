@@ -1,7 +1,9 @@
 .CNmixtG <- function(X, G, initialization,  modelname,  contamination,alphafix, alphamin, 
                      seed, start.z, start.v, start, label, iter.max, threshold, 
                      eps,AICcond, doCV, k){
+
   if( !is.null(seed)) set.seed(seed)
+
   if (!doCV){
     mlist <- .CNmixtG2(X, G, initialization,  modelname,  contamination, alphafix, alphamin, seed, start.z, start.v, start, label, iter.max, threshold, eps) 
     IC <- .ComputeIC(mlist)
@@ -49,9 +51,8 @@
   n <- nrow(X)    # sample size
   p <- ncol(X)    # number of variables
   if (p == 1 ) modelname = paste0(modelname,"II")
-  
   posterior = .postInit(initialization,X,n,p,G,start.z,label,modelname, threshold,start)
-  
+
   sigmar    = matrix(0, nrow=G, ncol=p^2 )
   invsigmar = matrix(0, nrow=G, ncol=p^2 )  
   mu = matrix(0, nrow = G, ncol = p)
@@ -64,15 +65,14 @@
   mmax=10
 
   if(contamination){
-    v <- array(0.9999,c(n,G),dimnames=list(1:n,paste("group ",1:G,sep="")))
+    v <- array(0.99,c(n,G),dimnames=list(1:n,paste("group ",1:G,sep="")))
     npar <- (G-1) + p*G + .ncovpar(modelname=modelname, p=p, G=G) + G
     if(is.null(alphafix)) npar <- npar + G
     if(!is.null(start.v)) v <- start.v  
-    eta = rep(1,G)
+    eta = rep(1.01,G)
     alpha = .checkPar(alphafix,G,0.999)
     alphamin = .checkPar(alphamin,G,0.5)
 
-    
   temp_em<-.C("loopC",
   as.integer(n), as.integer(p), as.integer(G), as.double(posterior), #1
   as.double(sigmar), as.double(invsigmar), as.double(mu), as.double(mtol), #2
@@ -116,7 +116,7 @@
   }
   detection <- data.frame(group=group,innergroup=innergroup)
   z.const  <- (posterior<.Machine$double.xmin)*.Machine$double.xmin+(posterior>.Machine$double.xmin)*posterior   # vincolo per evitare i NaN nel calcolo di tau*log(tau)
-  
+
   result <- list(
     model  = modelname,
     contamination = contamination,
@@ -158,14 +158,21 @@
   IC$AIC   <- 2*loglik - npar*2
   IC$BIC   <- 2*loglik - npar*log(n)
   IC$AIC3  <- 2*loglik - npar*3  
-  IC$AICc  <- IC$AIC - (2*npar*(npar+1))/(n-npar-1)
-  IC$AICu  <- ifelse(n/(n-npar-1)>0,IC$AICc - n*log(n/(n-npar-1)),NA)
   IC$CAIC  <- 2*loglik - npar*(1+log(n))
   IC$AWE   <- 2*loglik - 2*npar*(3/2+log(n))  
   z.const  <- (posterior<.Machine$double.xmin)*.Machine$double.xmin+(posterior>.Machine$double.xmin)*posterior   # vincolo per evitare i NaN nel calcolo di tau*log(tau)
   hard.z   <- (matrix(rep(apply(posterior,1,max),G),n,G,byrow=F)==posterior)*1
   ECM      <- sum(hard.z[-label==0,]*log(z.const[-label==0,]))
   IC$ICL   <- IC$BIC+2*ECM
+
+  if (n-npar-1>0) {
+    IC$AICc  <- IC$AIC - (2*npar*(npar+1))/(n-npar-1)
+    IC$AICu  <- IC$AICc - n*log(n/(n-npar-1))
+  }
+  else {
+    IC$AICc  <-IC$AICu <- -Inf
+  }
+  
   return(IC)
 }
 

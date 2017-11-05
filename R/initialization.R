@@ -17,7 +17,7 @@ if(initialization=="manual"){
 }
 
 if(initialization=="kmeans"){
-  clusters  <- kmeans(x=X, centers=G, nstart = 1)      
+  clusters  <- kmeans(x=X, centers=G, nstart = 5)      
   z         <- mclust::unmap(clusters$cluster,1:G)
 } 
 

@@ -62,7 +62,7 @@ dCN <- function(x, mu = rep(0,p), Sigma, alpha = 0.99, eta = 1.01){
   else data.matrix(x)
   n <- nrow(x)
   pdf= matrix(0, nrow=n, ncol=1)
-  temp_em<-.C("dCN",
+  temp_em<-.C("RdCN",
               as.integer(n), as.integer(d), as.integer(1), as.double(x),as.double(mean), #1
               as.double(varcov), as.double(eta), as.double(alpha), as.double(pdf),
               PACKAGE="ContaminatedMixt")

@@ -93,7 +93,7 @@ void get_weights (int N, int p, int G,double* z, double* alphafix, double* alpha
         alpha[g]= colsums_zv[g]/colsums_z[g];
         if (alpha[g] < alphamin[g]) alpha[g]= alphamin[g];
       }
-  // fact      
+  // fact    =correctionx   
   for(g = 0; g < G; g++)
     for(i=0; i < N; i++) 
       fact[i+g*N] = v[i+g*N] + ((double) 1.0 -v[i+g*N])/eta[g];
@@ -254,6 +254,7 @@ for(g=0; g<G; g++) {
     else v[n + N*g] = 0;
   }
 }
+
   free(zfact);
   free(Wt);
   free(PXgood);
@@ -361,11 +362,10 @@ void loopC (int *NN, int *pp, int *GG, double *z,
     get_weights(N, p, G, z, alphafix, alphamin, v, eta, prior, alpha, fact);
     // get Sigma, invSigma, zfact
     mstepC(x, N, p, G, z, mu, sampcov, Sigma, invSigma, *mmtol, *mmmax, D, covtype,fact, zfact);  
-    
     // Inflation parameters eta
     eta_max(N, p, G,x,z,zfact,mu,invSigma,v, eta);
     
-    // updates v,lllvalue,PXgood,PXbad
+    // updates v,lllvalue
     density2(N,p,G,z,prior,eta,invSigma,mu,x,fact,alpha,lab,v,lllvalue,pdf);
     //Aitken's Stopping Criterion
     exit = stopcrit(G, *maxiter, cc, loglik,*lllvalue, *threshold);
@@ -408,7 +408,7 @@ void loopC (int *NN, int *pp, int *GG, double *z,
 
   //fclose(f);
 }
-void dCN(int *NN, int *pp, int *GG,double *x, double *mu, double *invSigmaR, double* eta,
+void RdCN(int *NN, int *pp, int *GG,double *x, double *mu, double *invSigmaR, double* eta,
             double* alpha, double* pdf){
   int N = *NN;
   int p = *pp;
@@ -449,7 +449,7 @@ void RestepC(int* group, int *NN, int *pp, int *GG,double *x, double *mu, double
   double *z = (double*)malloc(sizeof(double)*N*G);
   int *lab = (int*)malloc(sizeof(int)*N);
   for(i=0; i<N; i++) lab[i]=0;
-  dCN(NN, pp, GG, x, mu, invSigmaR, eta, alpha, pdf);
+  RdCN(NN, pp, GG, x, mu, invSigmaR, eta, alpha, pdf);
   estepC(N, p, G, z, prior, pdf, lab,alpha);
   get_group(G, N, z, group);
   

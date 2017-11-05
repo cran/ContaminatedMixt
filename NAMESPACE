@@ -1,3 +1,4 @@
+useDynLib(ContaminatedMixt, .registration = TRUE)
 export(CNmixt,whichBest,getIC,getBestModel,getPosterior,getSize,getCluster,
        getPar,agree,getDetection,dCN,rCN,m.step,CNpredict,getCV,whichBestCV,
        CNmixtCV)
@@ -19,4 +20,4 @@ S3method(print,ContaminatedMixt)
 S3method(pairs,ContaminatedMixt)
 S3method(print,ContaminatedMixt.IC)
 S3method(print,ContaminatedMixt.CV)
-useDynLib(ContaminatedMixt)
+
