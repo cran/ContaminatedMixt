@@ -26,11 +26,13 @@ The convergence criteria for the M-step if an iterative procedure is necessary.
 The maximum number of iterations for an iterative procedure.}
 }
 \value{
-A list of the model parameters with the mu, Sigma, invSigma and px for each group.
+A list of the model parameters with the \code{mu}, \code{Sigma}, \code{invSigma} and \code{px} for each group.
 }
 
 \references{
-Punzo, A. and McNicholas, P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, DOI: 10.1002/bimj.201500144.
+Punzo A., Mazza A. and McNicholas P. D. (2018). \pkg{ContaminatedMixt}: An R Package for Fitting Parsimonious Mixtures of Multivariate Contaminated Normal Distributions. \emph{Journal of Statistical Software}.
+
+Punzo A. and McNicholas P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, \bold{58}(6), 1506--1537.
 }
 \author{
 Antonio Punzo, Angelo Mazza, Paul D. McNicholas 

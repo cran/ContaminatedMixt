@@ -267,7 +267,7 @@ int stopcrit(int G, int maxiter, int cc, double loglik[3],double llvalue,
   int exit=0;
   double a,b;
   
-  if (cc==maxiter || G==1){
+  if (cc==maxiter){
     exit = 1;
   } else{
     loglik[2] = loglik[1];loglik[1] = loglik[0];loglik[0]=llvalue;

@@ -16,8 +16,7 @@ rCN(n, mu = rep(0,p), Sigma, alpha = 0.99, eta = 1.01)
 either a vector of length \code{p} or a matrix with \code{p} columns, being \code{p = ncol(Sigma)}, representing the coordinates of the point(s) where the density must be evaluated
 }
   \item{mu}{
-either a vector of length \code{p}, representing the mean value, or (except for \code{rCN}) a matrix whose rows represent different mean vectors; if it is a matrix, its dimensions
-must match those of \code{x}
+either a vector of length \code{p}, representing the mean value, or (except for \code{rCN}) a matrix whose rows represent different mean vectors; if it is a matrix, its dimensions must match those of \code{x}
 }
   \item{Sigma}{
 a symmetric positive-definite matrix representing the scale matrix of the distribution; a vector of length 1 is also allowed (in this case, \code{p = 1} is set)
@@ -37,7 +36,9 @@ the number of random vectors to be generated
 }
 
 \references{
-Punzo, A. and McNicholas, P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, DOI: 10.1002/bimj.201500144.
+Punzo A., Mazza A. and McNicholas P. D. (2018). \pkg{ContaminatedMixt}: An R Package for Fitting Parsimonious Mixtures of Multivariate Contaminated Normal Distributions. \emph{Journal of Statistical Software}.
+
+Punzo A. and McNicholas P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, \bold{58}(6), 1506--1537.
 }
 \author{
 Antonio Punzo, Angelo Mazza, Paul D. McNicholas 

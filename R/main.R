@@ -13,7 +13,7 @@ CNmixt <- function(
   label=NULL,                   # groups of the labelled observations
   AICcond = FALSE,
   iter.max=1000,                # maximum number of iterations in the EM-algorithm
-  threshold=1.0e-03,            # stopping rule in the Aitken rule
+  threshold=1.0e-10,            # stopping rule in the Aitken rule
   parallel = FALSE,
   eps=1.0e-100
 ){
@@ -38,7 +38,7 @@ CNmixtCV <- function(
   start=0,                      # initialization for the package mixture
   label=NULL,                   # groups of the labelled observations
   iter.max=1000,                # maximum number of iterations in the EM-algorithm
-  threshold=1.0e-03,            # stopping rule in the Aitken rule
+  threshold=1.0e-10,            # stopping rule in the Aitken rule
   parallel = FALSE,
   eps=1.0e-100
 ){

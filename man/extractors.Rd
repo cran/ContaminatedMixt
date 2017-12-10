@@ -72,7 +72,7 @@ If not specified, all the estimated models are considered.
 }
 \details{
 When several models have been estimated, these functions consider the best model according to the information criterion in \code{criterion}, among the estimated models having a number of components among those in \code{G} and a parsimonious model among those in \code{model}.
-\code{whichBestCV} considers the best model according to the cross-validated error rates computed by  \code{\link{CNmixtCV}}.
+\code{whichBestCV} considers the best model according to the cross-validated error rates computed by \code{\link{CNmixtCV}}.
 \code{getIC} provides values for the information criteria in \code{criteria}.
 
 The \code{getBestModel} method returns a \code{ContaminatedMixt} object containing the best model only, selected as described above.

@@ -12,11 +12,11 @@ CNmixt(X, G, contamination = NULL, model = NULL,
    initialization = "mixt", alphafix = NULL, alphamin = 0.5, 
    seed = NULL, start.z = NULL, start.v = NULL, start = 0,
    label = NULL, AICcond = FALSE, iter.max = 1000, 
-   threshold = 1.0e-03, parallel = FALSE, eps = 1e-100)
+   threshold = 1.0e-10, parallel = FALSE, eps = 1e-100)
 CNmixtCV(X, G, contamination = NULL, model = NULL,
    initialization = "mixt", k = 10,alphafix = NULL, 
    alphamin = 0.5, seed = NULL, start.z = NULL, start.v = NULL, 
-   start = 0, label = NULL, iter.max = 1000, threshold = 1.0e-03, 
+   start = 0, label = NULL, iter.max = 1000, threshold = 1.0e-10, 
    parallel = FALSE, eps = 1e-100)  
 }                 
 %- maybe also 'usage' for other objects documented here.
@@ -27,12 +27,14 @@ CNmixtCV(X, G, contamination = NULL, model = NULL,
   \item{G}{
   a vector containing the numbers of groups to be tried. 
   }  
-  \item{contamination}{an optional boolean indicating if the model(s) to be fitted have to be contaminated or not. If \code{NULL}, then both types of models are fitted.
+  \item{contamination}{an optional boolean indicating if the model(s) to be fitted have to be contaminated or not. 
+  If \code{NULL}, then both types of models are fitted.
   }
   \item{model}{
   a vector indicating the model(s) to be fitted.
-  Possible values are: \code{"EII"}, \code{"VII"}, \code{"EEI"}, \code{"VEI"}, \code{"EVI"}, \code{"VVI"}, \code{"EEE"}, \code{"VEE"}, \code{"EVE"}, \code{"EEV"}, \code{"VVE"}, \code{"VEV"}, \code{"EVV"}, \code{"VVV"}.
+  In the multivariate case (\eqn{p>1}), possible values are: \code{"EII"}, \code{"VII"}, \code{"EEI"}, \code{"VEI"}, \code{"EVI"}, \code{"VVI"}, \code{"EEE"}, \code{"VEE"}, \code{"EVE"}, \code{"EEV"}, \code{"VVE"}, \code{"VEV"}, \code{"EVV"}, \code{"VVV"}.
 	If \code{NULL}, then all 14 models are fitted.
+	In the univariate case (\eqn{p=1}), possible values are \code{"E"} and \code{"V"}.
   }
   \item{initialization}{
   initialization strategy for the ECM algorithm. 
@@ -122,24 +124,25 @@ The predictive ability of a model for classification may be estimated using the 
 }
 
 \references{
-Absil, P. A., Mahony, R. and Sepulchre, R. (2009). Optimization Algorithms on Matrix Manifolds. Princeton University Press, Princeton, NJ.
+Absil P. A., Mahony R. and Sepulchre R. (2009). Optimization Algorithms on Matrix Manifolds. Princeton University Press, Princeton, NJ.
 
-Banfield, J. D. and Raftery A. E. (1993). Model-Based Gaussian and Non-Gaussian Clustering. \emph{Biometrics}, \bold{49}(3), 803--821.
+Banfield J. D. and Raftery A. E. (1993). Model-Based Gaussian and Non-Gaussian Clustering. \emph{Biometrics}, \bold{49}(3), 803--821.
 
-Browne, R. P. and McNicholas, P. D. (2013). Estimating Common Principal Components in High Dimensions. \emph{Advances in Data Analysis and Classification}, \bold{8}(2), 217--226.
+Browne R. P. and McNicholas P. D. (2013). Estimating Common Principal Components in High Dimensions. \emph{Advances in Data Analysis and Classification}, \bold{8}(2), 217--226.
 
-Browne, R. P. and McNicholas, P. D. (2014). Orthogonal Stiefel manifold optimization for eigen-decomposed covariance parameter estimation in mixture models. \emph{Statistics and Computing},
-\bold{24}(2), 203--210.
+Browne, R. P. and McNicholas P. D. (2014). Orthogonal Stiefel manifold optimization for eigen-decomposed covariance parameter estimation in mixture models. \emph{Statistics and Computing}, \bold{24}(2), 203--210.
 
-Browne, R. P. and McNicholas, P. D. (2015). \pkg{mixture}: Mixture Models for Clustering and Classification. R package version 1.4.
+Browne R. P. and McNicholas P. D. (2015). \pkg{mixture}: Mixture Models for Clustering and Classification. R package version 1.4.
 
-Celeux, G. and Govaert, G. (1995). Gaussian Parsimonious Clustering Models. \emph{Pattern Recognition}. \bold{28}(5), 781--793.
+Celeux G. and Govaert G. (1995). Gaussian Parsimonious Clustering Models. \emph{Pattern Recognition}. \bold{28}(5), 781--793.
 
-Hunter, D. R. and Lange, K. (2000). Rejoinder to Discussion of ``Optimization Transfer Using Surrogate Objective Functions''. \emph{Journal of Computational and Graphical Statistics}, \bold{9}(1), 52--59.
+Hunter D. R. and Lange K. (2000). Rejoinder to Discussion of ``Optimization Transfer Using Surrogate Objective Functions''. \emph{Journal of Computational and Graphical Statistics}, \bold{9}(1), 52--59.
 
-Punzo, A. and McNicholas, P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, DOI: 10.1002/bimj.201500144.
+Punzo A., Mazza A. and McNicholas P. D. (2018). \pkg{ContaminatedMixt}: An R Package for Fitting Parsimonious Mixtures of Multivariate Contaminated Normal Distributions. \emph{Journal of Statistical Software}.
 
-Vandewalle V., Biernacki C., Celeux G., Govaert, G. (2013). A predictive deviance criterion for selecting a generative
+Punzo A. and McNicholas P. D. (2016). Parsimonious mixtures of multivariate contaminated normal distributions. \emph{Biometrical Journal}, \bold{58}(6), 1506--1537.
+
+Vandewalle V., Biernacki C., Celeux G. and Govaert G. (2013). A predictive deviance criterion for selecting a generative
 model in semi-supervised classification. \emph{Computational Statistics and Data Analysis}, \bold{64}, 220--236.
 }
 \author{
