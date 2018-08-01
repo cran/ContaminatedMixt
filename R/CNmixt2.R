@@ -57,7 +57,6 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
       contamination=mm$contamination[i],
       alphafix=alphafix,
       alphamin=alphamin, #rep(alphamin,mm$k[i]),
-      seed=seed,
       start.z=start.z,                 		
       start.v=start.v,                   	
       start=start,                      
@@ -75,11 +74,13 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
     cores <- getOption("cl.cores", parallel::detectCores())
     cat(paste("\n Using",cores,"cores\n"))
     cl <- parallel::makeCluster(cores)
+    if(!is.null(seed)) clusterSetRNGStream(cl =cl,iseed = seed)
     #clusterExport(cl,envir=environment())
     par <- parallel::parLapply(cl=cl,1:nrow(mm),function(i) job(i))
     parallel::stopCluster(cl)
   }
   else {
+    if(!is.null(seed)) set.seed(seed) 
     par <- lapply(1:nrow(mm),function(i) job(i))
   }
   i<- 1
@@ -91,7 +92,10 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
     }
     i<- i + 1
   }
-  if (!is.null(par)){
+   if (is.null(par)){
+     cat("No model was estimated.\n")
+     res <- NULL
+   } else{
     class = if (doCV)  "ContaminatedMixt.CV" else "ContaminatedMixt"
     res <-
       structure(
@@ -99,12 +103,7 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
           models = par
         ),              
         class = class
-      )
-    print(res) 
-    invisible(res) 
-  } else {
-  cat("No model was estimated.\n")
-  return(NULL)
-  }
+      )}
+return(res)
 }
 

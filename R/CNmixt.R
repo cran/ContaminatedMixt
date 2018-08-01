@@ -1,14 +1,12 @@
 .CNmixtG <- function(X, G, initialization,  modelname,  contamination,alphafix, alphamin, 
-                     seed, start.z, start.v, start, label, iter.max, threshold, 
+                     start.z, start.v, start, label, iter.max, threshold, 
                      eps,AICcond, doCV, k){
 
-  if( !is.null(seed)) set.seed(seed)
-
-  if (!doCV){
-    mlist <- .CNmixtG2(X, G, initialization,  modelname,  contamination, alphafix, alphamin, seed, start.z, start.v, start, label, iter.max, threshold, eps) 
+   if (!doCV){
+    mlist <- .CNmixtG2(X, G, initialization,  modelname,  contamination, alphafix, alphamin, start.z, start.v, start, label, iter.max, threshold, eps) 
     IC <- .ComputeIC(mlist)
     if(AICcond & length(unique(label))>1){
-      mlist2 <- .CNmixtG2(X, G, initialization,  modelname,  contamination,alphafix, alphamin, seed, start.z, start.v, start, label=rep(0,nrow(X)), iter.max, threshold, eps) 
+      mlist2 <- .CNmixtG2(X, G, initialization,  modelname,  contamination,alphafix, alphamin, start.z, start.v, start, label=rep(0,nrow(X)), iter.max, threshold, eps) 
       loglik3<- CNllikelihood(X,mlist$prior,mlist$mu,mlist$invSigma,mlist$eta,mlist$alpha)
       IC$BEC=mlist$loglik-mlist2$loglik
       IC$AICcond=2*mlist$loglik-4*mlist$obslll+2*loglik3
@@ -27,7 +25,7 @@
       folds_i[[i]] = NULL # remove the ith fold
       folds_i = unlist(folds_i, use.names = FALSE) 
       lfolds_i = label[folds_i]
-      temp <- .CNmixtG2(X[folds_i,], G, initialization,  modelname,  contamination,alphafix, alphamin, seed, start.z, start.v, start, label=rep(0,length(folds_i)), iter.max, threshold, eps) 
+      temp <- .CNmixtG2(X[folds_i,], G, initialization,  modelname,  contamination,alphafix, alphamin, start.z, start.v, start, label=rep(0,length(folds_i)), iter.max, threshold, eps) 
       ltemp = temp$group[lfolds_i!=0]
       el[i] = length(ltemp)
       e[i] = mclust::classError(ltemp,lfolds_i[lfolds_i!=0])$errorRate
@@ -46,7 +44,7 @@
 }
 
 .CNmixtG2 <- function(X, G, initialization,  modelname,  contamination, alphafix, alphamin, 
-                     seed, start.z, start.v, start, label, iter.max, threshold, 
+                     start.z, start.v, start, label, iter.max, threshold, 
                      eps){
   n <- nrow(X)    # sample size
   p <- ncol(X)    # number of variables

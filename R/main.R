@@ -21,7 +21,8 @@ CNmixt <- function(
   args$doCV=FALSE
   res = do.call("CNmixt_main", args)
   res$call= match.call()
-  res
+  print(res)
+  invisible(res)
 }
 CNmixtCV <- function(
   X,                            # matrix of data
@@ -46,5 +47,6 @@ CNmixtCV <- function(
   args$doCV=TRUE
   do.call("CNmixt_main", args)
   res$call= match.call()
-  res
+  print(res)
+  invisible(res)
 }
