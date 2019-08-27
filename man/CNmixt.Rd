@@ -12,12 +12,12 @@ CNmixt(X, G, contamination = NULL, model = NULL,
    initialization = "mixt", alphafix = NULL, alphamin = 0.5, 
    seed = NULL, start.z = NULL, start.v = NULL, start = 0,
    label = NULL, AICcond = FALSE, iter.max = 1000, 
-   threshold = 1.0e-10, parallel = FALSE, eps = 1e-100)
+   threshold = 1.0e-10, parallel = FALSE, eps = 1e-100,verbose = TRUE)
 CNmixtCV(X, G, contamination = NULL, model = NULL,
    initialization = "mixt", k = 10,alphafix = NULL, 
    alphamin = 0.5, seed = NULL, start.z = NULL, start.v = NULL, 
    start = 0, label = NULL, iter.max = 1000, threshold = 1.0e-10, 
-   parallel = FALSE, eps = 1e-100)  
+   parallel = FALSE, eps = 1e-100, verbose = TRUE)  
 }                 
 %- maybe also 'usage' for other objects documented here.
 \arguments{                      
@@ -100,6 +100,7 @@ CNmixtCV(X, G, contamination = NULL, model = NULL,
 }
 	\item{k}{number of equal sized subsamples used in \eqn{k}-fold cross-validation.
 }
+\item{verbose}{write text to the console}
 }
 \details{
 The multivariate data contained in \code{X} are either clustered or classified using parsimonious mixtures of multivariate contaminated normal distributions with some or all of the 14 parsimonious models described in Punzo and McNicholas (2016). 

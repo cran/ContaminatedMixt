@@ -6,8 +6,8 @@ Check these declarations against the C/Fortran source code.
 */
 
 /* .C calls */
-extern void loopC(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void loopU(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void loopC(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void loopU(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void mstepU(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void RdCN(void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void RestepC(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
@@ -16,8 +16,8 @@ extern void RllikelihoodC(void *, void *, void *, void *, void *, void *, void *
 extern void RllikelihoodU(void *, void *, void *, void *, void *, void *, void *, void *);
 
 static const R_CMethodDef CEntries[] = {
-  {"loopC",         (DL_FUNC) &loopC,         24},
-  {"loopU",         (DL_FUNC) &loopU,         19},
+  {"loopC",         (DL_FUNC) &loopC,         25},
+  {"loopU",         (DL_FUNC) &loopU,         20},
   {"mstepU",        (DL_FUNC) &mstepU,        12},
   {"RdCN",          (DL_FUNC) &RdCN,           9},
   {"RestepC",       (DL_FUNC) &RestepC,       10},

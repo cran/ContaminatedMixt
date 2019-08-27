@@ -1,6 +1,6 @@
 CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,alphamin,
                         seed,start.z,start.v,start,label,iter.max,threshold,
-                        parallel,eps,doCV,k){
+                        parallel,eps,doCV,k,verbose){
   initialization <- match.arg(initialization,c("mixt","kmeans","random.post","random.clas","manual"))
   if(is.data.frame(X)) X <- as.matrix(X) 
   n <- nrow(X)
@@ -38,17 +38,17 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
     mm1 <- mm[mm$k==1,]
     mm2 <- mm1[!duplicated(subset(mm1,select= -model, drop=FALSE)),]
     if (nrow(mm1) > nrow(mm2)){
-      cat("With G = 1, some models are equivalent, so only one model from each set of equivalent models will be run.\n")
+      if(verbose) cat("With G = 1, some models are equivalent, so only one model from each set of equivalent models will be run.\n")
     }
     mm <- rbind(mm2,mm[mm$k!=1,])
   }
   mm <- mm[order(mm$k),,drop=FALSE]
 
     job <- function(i){
-    cat("\nEstimating model")
-    if (!is.null(mm$model[i])) cat(paste0(" ",mm$model[i]))
-    cat(ifelse(mm$contamination[i]," contaminated",""))
-    cat(paste0(" with G = ",mm$k[i],":"))
+    if(verbose) cat("\nEstimating model")
+    if (!is.null(mm$model[i])) if(verbose) cat(paste0(" ",mm$model[i]))
+    if(verbose) cat(ifelse(mm$contamination[i]," contaminated",""))
+    if(verbose) cat(paste0(" with G = ",mm$k[i],":"))
      .CNmixtG(
       X=X,  		                      
       G=mm$k[i],                            
@@ -66,13 +66,14 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
       eps=eps,
       AICcond=AICcond,
       doCV=doCV,
-      k=k
+      k=k,
+      verbose=verbose
     )  
   }
 
   if(parallel){
     cores <- getOption("cl.cores", parallel::detectCores())
-    cat(paste("\n Using",cores,"cores\n"))
+    if(verbose) cat(paste("\n Using",cores,"cores\n"))
     cl <- parallel::makeCluster(cores)
     if(!is.null(seed)) clusterSetRNGStream(cl =cl,iseed = seed)
     #clusterExport(cl,envir=environment())
@@ -84,16 +85,16 @@ CNmixt_main <- function(X,G,contamination,model,initialization,AICcond,alphafix,
     par <- lapply(1:nrow(mm),function(i) job(i))
   }
   i<- 1
-  cat("\n")
+  if(verbose) cat("\n")
   while (!i > length(par)){
     if (! is.null(par[[i]]$error)){
-      cat(paste(par[[i]]$error,"\n"))
+      if(verbose) cat(paste(par[[i]]$error,"\n"))
       par[[i]] <- NULL
     }
     i<- i + 1
   }
    if (is.null(par)){
-     cat("No model was estimated.\n")
+     if(verbose) cat("No model was estimated.\n")
      res <- NULL
    } else{
     class = if (doCV)  "ContaminatedMixt.CV" else "ContaminatedMixt"

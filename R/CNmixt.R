@@ -1,16 +1,16 @@
 .CNmixtG <- function(X, G, initialization,  modelname,  contamination,alphafix, alphamin, 
                      start.z, start.v, start, label, iter.max, threshold, 
-                     eps,AICcond, doCV, k){
+                     eps,AICcond, doCV, k,verbose){
 
    if (!doCV){
-    mlist <- .CNmixtG2(X, G, initialization,  modelname,  contamination, alphafix, alphamin, start.z, start.v, start, label, iter.max, threshold, eps) 
+    mlist <- .CNmixtG2(X, G, initialization,  modelname,  contamination, alphafix, alphamin, start.z, start.v, start, label, iter.max, threshold, eps,verbose) 
     IC <- .ComputeIC(mlist)
     if(AICcond & length(unique(label))>1){
-      mlist2 <- .CNmixtG2(X, G, initialization,  modelname,  contamination,alphafix, alphamin, start.z, start.v, start, label=rep(0,nrow(X)), iter.max, threshold, eps) 
+      mlist2 <- .CNmixtG2(X, G, initialization,  modelname,  contamination,alphafix, alphamin, start.z, start.v, start, label=rep(0,nrow(X)), iter.max, threshold, eps,verbose) 
       loglik3<- CNllikelihood(X,mlist$prior,mlist$mu,mlist$invSigma,mlist$eta,mlist$alpha)
       IC$BEC=mlist$loglik-mlist2$loglik
       IC$AICcond=2*mlist$loglik-4*mlist$obslll+2*loglik3
-      cat("\n")
+      if(verbose) cat("\n")
       }
     mlist$IC=IC
   }
@@ -20,12 +20,12 @@
     xl = as.factor(xl)
     folds = caret::createFolds(xl,k=k)
     for(i in 1:k){
-      cat(paste("\n",i,"fold"))
+      if(verbose) cat(paste("\n",i,"fold"))
       folds_i = folds
       folds_i[[i]] = NULL # remove the ith fold
       folds_i = unlist(folds_i, use.names = FALSE) 
       lfolds_i = label[folds_i]
-      temp <- .CNmixtG2(X[folds_i,], G, initialization,  modelname,  contamination,alphafix, alphamin, start.z, start.v, start, label=rep(0,length(folds_i)), iter.max, threshold, eps) 
+      temp <- .CNmixtG2(X[folds_i,], G, initialization,  modelname,  contamination,alphafix, alphamin, start.z, start.v, start, label=rep(0,length(folds_i)), iter.max, threshold, eps,verbose) 
       ltemp = temp$group[lfolds_i!=0]
       el[i] = length(ltemp)
       e[i] = mclust::classError(ltemp,lfolds_i[lfolds_i!=0])$errorRate
@@ -45,7 +45,7 @@
 
 .CNmixtG2 <- function(X, G, initialization,  modelname,  contamination, alphafix, alphamin, 
                      start.z, start.v, start, label, iter.max, threshold, 
-                     eps){
+                     eps, verbose){
   n <- nrow(X)    # sample size
   p <- ncol(X)    # number of variables
   if (p == 1 ) modelname = paste0(modelname,"II")
@@ -78,6 +78,7 @@
   as.integer(iter.max),as.double(threshold),as.double(prior), as.integer(iteration),#4
   as.double(llvalue),  as.double(obslll),as.integer(group), as.double(v), #5
   as.double(eta), as.double(alpha), as.double(!is.null(alphafix)), as.double(alphamin),#6
+  as.integer(verbose),
   PACKAGE="ContaminatedMixt")
   
     v = array(temp_em[[20]], dim= c(n,G),dimnames=list(1:n,paste("group ",1:G,sep="")) )
@@ -90,6 +91,7 @@
   as.integer(mmax), as.double(X), as.integer(label),as.character(modelname), #3
   as.integer(iter.max),as.double(threshold),as.double(prior), as.integer(iteration),#4
   as.double(llvalue),as.double(obslll),as.integer(group),
+  as.integer(verbose),
   PACKAGE="ContaminatedMixt")
     npar <- (G-1) + p*G + .ncovpar(modelname=modelname, p=p, G=G) 
     alpha = eta =v = NULL

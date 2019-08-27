@@ -15,13 +15,14 @@ CNmixt <- function(
   iter.max=1000,                # maximum number of iterations in the EM-algorithm
   threshold=1.0e-10,            # stopping rule in the Aitken rule
   parallel = FALSE,
-  eps=1.0e-100
+  eps=1.0e-100,
+  verbose= TRUE
 ){
   args=mget(names(formals()),sys.frame(sys.nframe()))
   args$doCV=FALSE
   res = do.call("CNmixt_main", args)
   res$call= match.call()
-  print(res)
+  if (verbose) print(res)
   invisible(res)
 }
 CNmixtCV <- function(
@@ -41,12 +42,13 @@ CNmixtCV <- function(
   iter.max=1000,                # maximum number of iterations in the EM-algorithm
   threshold=1.0e-10,            # stopping rule in the Aitken rule
   parallel = FALSE,
-  eps=1.0e-100
+  eps=1.0e-100,
+  verbose=TRUE
 ){
   args=mget(names(formals()),sys.frame(sys.nframe()))
   args$doCV=TRUE
   do.call("CNmixt_main", args)
   res$call= match.call()
-  print(res)
+  if(verbose) print(res)
   invisible(res)
 }

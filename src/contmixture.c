@@ -24,7 +24,7 @@ void get_group(int G, int N, double* z, int* group){
       max = z[n + N*g];
       max_l = g;
     } 
-    group[n] = max_l+1;
+  group[n] = max_l+1;
   }
 }
 
@@ -326,7 +326,7 @@ void loopC (int *NN, int *pp, int *GG, double *z,
             int *mmmax, double *x, int *lab, char **covtype, 
             int *maxiter, double* threshold,double* prior,int* iteration,
             double *lllvalue, double *obslll, int* group, double *v,
-            double* eta, double* alpha, double* alphafix, double* alphamin){
+            double* eta, double* alpha, double* alphafix, double* alphamin, int* verbose){
   int g, i, cc=0;
   int N = *NN;
   int p = *pp;
@@ -357,7 +357,7 @@ void loopC (int *NN, int *pp, int *GG, double *z,
  
   while(exit==0){
     cc++;
-    Rprintf("*");
+    if (*verbose==1) Rprintf("*");
     // get prior, alpha, fact 
     get_weights(N, p, G, z, alphafix, alphamin, v, eta, prior, alpha, fact);
     // get Sigma, invSigma, zfact

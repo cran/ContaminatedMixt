@@ -96,7 +96,7 @@ void loopU (int *NN, int *pp, int *GG, double *z,
             double *sigmar, double *invsigmar, double *mu, double *mmtol, 
             int *mmmax, double *x, int *lab, char **covtype, 
             int *maxiter, double* threshold,double* prior,int* iteration,
-            double *lllvalue,double *obslll, int* group){  
+            double *lllvalue,double *obslll, int* group, int* verbose){  
   int g, i, cc=0;
   int N = *NN;
   int p = *pp;
@@ -136,7 +136,7 @@ void loopU (int *NN, int *pp, int *GG, double *z,
     exit = stopcrit(G, *maxiter, cc, loglik, *lllvalue, *threshold);
     //E-Step 
     estepU(N, p, G, z, prior, PXgood, lab);
-    Rprintf("*");
+    if (*verbose==1) Rprintf("*");
     //Rprintf("\n------------ iteration, %d \n",cc);
   }
   
@@ -174,7 +174,7 @@ void loopU (int *NN, int *pp, int *GG, double *z,
 }
 void mstepU (int *NN, int *pp, int *GG, double *z, 
             double *sigmar, double *invsigmar, double *mu, double *mmtol, 
-            int *mmmax, double *x, char **covtype, double *PXgood){
+            int *mmmax, double *x, char **covtype, double *PXgood, int *verbose){
   int g, i; 
   int N = *NN;
   int p = *pp;
@@ -193,9 +193,9 @@ void mstepU (int *NN, int *pp, int *GG, double *z,
     D[i] = 0.0;
   for(i=0; i<p; i++)
     D[i*p + i] = (double)1.0;
-    // gets Sigma, invSigma, logdet
-    mstep(x, N, p, G, z, mu, sampcov, Sigma, invSigma, logdet,  *mmtol, *mmmax, D, covtype);
-    densityU( N, p, G, z, Sigma, invSigma, mu,x,logdet, PXgood);
+  // gets Sigma, invSigma, logdet
+  mstep(x, N, p, G, z, mu, sampcov, Sigma, invSigma, logdet,  *mmtol, *mmmax, D, covtype);
+  densityU( N, p, G, z, Sigma, invSigma, mu,x,logdet, PXgood);
   // Prepare values to return
   for(g=0; g<G; g++){
     for(i=0; i<p*p; i++){
