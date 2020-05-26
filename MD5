@@ -1,4 +1,4 @@
-45e1291e95572d056399c19805c10ba3 *DESCRIPTION
+482d5fab5377fdc6aefd2182d900fda8 *DESCRIPTION
 270a622969797d5c284234dcc3b780e9 *NAMESPACE
 48690215e134969b0ba8df681494aeb3 *R/CNmixt.R
 c22e4fde99b23b54861290476f7d1069 *R/CNmixt2.R
@@ -28,9 +28,9 @@ db70f30fc127e5053bcf8485dcae220f *man/m.step.Rd
 39453b125c5db78a2624ca240a04af72 *man/plot.ContaminatedMixt.Rd
 76d6dd717f46a07eaa93c3b582bfaf1d *man/predictg.Rd
 120c65ae11bf8ebdb5065f0db660c737 *man/wine.Rd
-ec9c6f4ca249b0a17c06d8876f0a6704 *src/ContaminatedMixt_init.c
+fc21673b27c8ca5957278ea73f26f4b0 *src/ContaminatedMixt_init.c
 d2d14de06cb10e5f83eb3b7b2029b6b6 *src/Makevars
-55b0335e10f11eaf63f8f308741446f9 *src/Uncontam.c
+288d17f9228d290b4e36489cacfaad01 *src/Uncontam.c
 861987fbabac30206fa525a38c227308 *src/brentmin.c
 15cd89213bd2ccc3c9569c582acdc8a2 *src/contmixture.c
 3766b901ddf1c3efc294daa55c756e28 *src/functions.h

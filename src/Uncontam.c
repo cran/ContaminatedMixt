@@ -174,7 +174,7 @@ void loopU (int *NN, int *pp, int *GG, double *z,
 }
 void mstepU (int *NN, int *pp, int *GG, double *z, 
             double *sigmar, double *invsigmar, double *mu, double *mmtol, 
-            int *mmmax, double *x, char **covtype, double *PXgood, int *verbose){
+            int *mmmax, double *x, char **covtype, double *PXgood) {//, int *verbose){
   int g, i; 
   int N = *NN;
   int p = *pp;
