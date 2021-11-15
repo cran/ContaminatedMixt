@@ -4,12 +4,8 @@
 #include <R.h>
 #include <Rmath.h>
 #include <string.h>
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>
-#else
 #include <R_ext/Lapack.h>
 #include <R_ext/BLAS.h>
-#endif
 #include "functions.h"
 #include "functionsC.h"
 #define COMMENTS 0 

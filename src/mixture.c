@@ -16,12 +16,8 @@ Date/Publication: 2015-03-10 19:47:53
 #include <R.h>
 #include <Rmath.h>
 #include <string.h>
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>
-#else
 #include <R_ext/Lapack.h>
 #include <R_ext/BLAS.h>
-#endif
 #include "functions.h"
 #define COMMENTS 0 
 
@@ -405,7 +401,7 @@ void msEEV (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     }
     for(i=0; i<p; i++)
         lam = lam*A[i*p + i];
-	lam = pow(lam,(double)1.0/(double)p); 
+	  lam = pow(lam,(double)1.0/(double)p); 
 
     for(i=0; i<p*p; i++)
         A[i] /= lam;
@@ -826,8 +822,8 @@ void msEVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     for(g=0; g<G; g++)
         logdet[g] = (double)p*log(lam);
          
-        for(i=0; i<p*p; i++)
-            D[i] = D6[i];  
+    for(i=0; i<p*p; i++)
+        D[i] = D6[i];  
     free(W);
     free(D6);
     free(prod);
@@ -989,8 +985,8 @@ void msVVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
 
     for(g=0; g<G; g++)
         logdet[g] = (double)p*log((lam[g]));
-        for(i=0; i<p*p; i++)
-            D[i] = D6[i];  
+    for(i=0; i<p*p; i++)
+        D[i] = D6[i];  
     free(W);
     free(D6);
     free(prod);
@@ -1333,7 +1329,7 @@ void msVEE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     determinant(W,p,p,&det);
     for(i=0; i<p*p; i++) 
         C[i] = W[i]/pow(det,(double)1.0/(double)p);
-        ginv(p,p,C,invC);
+    ginv(p,p,C,invC);
     for(g=0; g<G; g++)  
         lam[g] = 0.0;
     for(g=0; g<G; g++) { 
@@ -1369,7 +1365,7 @@ void msVEE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     determinant(C,p,p,&det);
     for(i=0; i< p*p; i++)
         C[i] = C[i]/pow(det,(double)1.0/(double)p);
-        ginv(p,p,C,invC);
+    ginv(p,p,C,invC);
     for(g=0; g<G; g++)  
         lam[g] = 0.0;
     for(g=0; g<G; g++) { 
@@ -1482,8 +1478,8 @@ void msVEI (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     while(fabs(conv[1]-conv[0]) > eplison && count < maxiter) {
     for(g=0; g<G; g++) 
         wt[g] = pi[g]/lam[g];
-        sumSkwt(sampcov, wt, p, G, W);
-        prod = 1.0;
+    sumSkwt(sampcov, wt, p, G, W);
+    prod = 1.0;
     for(i=0; i<p; i++) {
         A[i*p + i] = W[i*p + i];
         prod *= A[i*p + i];
