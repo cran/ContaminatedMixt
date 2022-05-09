@@ -1,4 +1,4 @@
-c1ed91937f10b2929a7b3439f882ba77 *DESCRIPTION
+3cc88a567e786acb90868c57128aae69 *DESCRIPTION
 270a622969797d5c284234dcc3b780e9 *NAMESPACE
 48690215e134969b0ba8df681494aeb3 *R/CNmixt.R
 c22e4fde99b23b54861290476f7d1069 *R/CNmixt2.R
@@ -35,5 +35,5 @@ c8c786a643f7238a4aa355ecfbfb5502 *src/Uncontam.c
 eeea59caeb22739ecd1837db4d4d545d *src/contmixture.c
 3766b901ddf1c3efc294daa55c756e28 *src/functions.h
 461ab2e7cf490ec904f817693a780084 *src/functionsC.h
-58827705d31bf9952990fe8f7ff712a5 *src/mixture.c
+9ffff104476d4d605bba7bba83bca865 *src/mixture.c
 dbf6137b8567a1f4529b6a6ed05e899b *src/zeroin.h

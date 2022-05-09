@@ -9,7 +9,7 @@ Repository: CRAN
 Packaged: 2015-03-10 16:02:12 UTC; ryanbrowne
 Date/Publication: 2015-03-10 19:47:53
 */
-
+#define USE_FC_LEN_T
 #include <R_ext/Applic.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +18,10 @@ Date/Publication: 2015-03-10 19:47:53
 #include <string.h>
 #include <R_ext/Lapack.h>
 #include <R_ext/BLAS.h>
+#ifndef FCONE
+# define FCONE
+#endif
+
 #include "functions.h"
 #define COMMENTS 0 
 
@@ -393,8 +397,8 @@ void msEEV (int p, double pi[], int G, double **sampcov, double **Sigma, double 
         }
     }
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,EWK[g],&p,WK[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,EWK[g],&p,&beta,dummy2,&p);
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,EWK[g],&p,WK[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,EWK[g],&p,&beta,dummy2,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             A[i] = A[i] + dummy2[i];
         }  
@@ -412,10 +416,10 @@ void msEEV (int p, double pi[], int G, double **sampcov, double **Sigma, double 
         B[i*p + i] = (double)1.0/A[i*p + i];
 
     for(g=0; g<G; g++) {
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWK[g],&p,A,&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,EWK[g],&p,&beta,dummy2,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWK[g],&p,B,&p,&beta,dummy3,&p);
-        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,EWK[g],&p,&beta,dummy4,&p);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWK[g],&p,A,&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,EWK[g],&p,&beta,dummy2,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWK[g],&p,B,&p,&beta,dummy3,&p FCONE FCONE);
+        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,EWK[g],&p,&beta,dummy4,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             Sigma[g][i] = lam*dummy2[i];
             invSigma[g][i] = (double)1.0/lam * dummy4[i];
@@ -499,8 +503,8 @@ void getOk(double **sampcov, double **Ok, double pi[], int G, int p) {
             }
         }
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,Wk[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,EWk[g],&p,&beta,dummy2,&p);
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,EWk[g],&p,&beta,dummy2,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             Ok1[g][i] = dummy2[i];
         }
@@ -558,8 +562,8 @@ void getEkOk(double **sampcov, double **Ok, double **EWk, double pi[], int G, in
             }
         }
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,Wk[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,EWk[g],&p,&beta,dummy2,&p);
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,EWk[g],&p,&beta,dummy2,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             Ok[g][i] = dummy2[i];
         }
@@ -653,10 +657,10 @@ eplison, int maxiter) {
     for(i=0; i<p; i++)
         B[i*p + i] = (double)1.0/A[i*p + i];
     for(g=0; g<G; g++) {
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,A,&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,EWk[g],&p,&beta,dummy2,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,B,&p,&beta,dummy3,&p);
-        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,EWk[g],&p,&beta,dummy4,&p);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,A,&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,EWk[g],&p,&beta,dummy2,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,EWk[g],&p,B,&p,&beta,dummy3,&p FCONE FCONE);
+        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,EWk[g],&p,&beta,dummy4,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             Sigma[g][i] = lam[g]*dummy2[i];
             invSigma[g][i] = ((double)1.0/lam[g])*dummy4[i];
@@ -723,8 +727,8 @@ void msEVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     }
     
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D,&p,Wk[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D,&p,&beta,dummy2,&p);
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D,&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D,&p,&beta,dummy2,&p FCONE FCONE);
         for(i=0; i<p*p; i++){
             B[g][i] = dummy2[i];
         }
@@ -751,8 +755,8 @@ void msEVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
             D[i] = D6[i];
     newD(D, p, G, Wk, Ak, D6); 
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D6,&p,Wk[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);{
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D6,&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);{
         for(i=0; i<p*p; i++)
             B[g][i] = dummy2[i];
         }
@@ -785,9 +789,9 @@ void msEVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
             B[g][i*p+i] = (double)1.0/Ak[i + g*p];
     for(g=0; g<G; g++){
        sum[g] = 0.0;
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p);
-       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy2,&p,Wk[g],&p,&beta,dummy3,&p);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p FCONE FCONE);
+       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy2,&p,Wk[g],&p,&beta,dummy3,&p FCONE FCONE);
         for(i=0; i<p; i++) {
             lam += dummy3[i*p + i];
         }
@@ -810,10 +814,10 @@ void msEVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
             B[g][i*p+i] = lam*Ak[i + g*p];
 
     for(g=0; g<G; g++) {
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p);
-       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,C[g],&p,&beta,dummy3,&p);
-       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,D6,&p,&beta,dummy4,&p);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p FCONE FCONE);
+       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,C[g],&p,&beta,dummy3,&p FCONE FCONE);
+       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,D6,&p,&beta,dummy4,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             Sigma[g][i] = dummy2[i];
             invSigma[g][i] = dummy4[i];
@@ -886,8 +890,8 @@ void msVVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
         }
     }
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D,&p,Wk[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D,&p,&beta,dummy2,&p);
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D,&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D,&p,&beta,dummy2,&p FCONE FCONE);
         for(i=0; i<p*p; i++){
             B[g][i] = dummy2[i];
         }
@@ -914,8 +918,8 @@ void msVVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
 
     while((conv[1]-conv[0])/fabs(conv[0]) > eplison && count < maxiter){
     for(g=0; g<G; g++) {
-        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D6,&p,Wk[g],&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);{
+        dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D6,&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);{
         for(i=0; i<p*p; i++)
             B[g][i] = dummy2[i];
         }
@@ -951,9 +955,9 @@ void msVVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     for(g=0; g<G; g++){
        sum[g] = 0.0;
        lam[g] = 0.0;
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p);
-       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy2,&p,sampcov[g],&p,&beta,dummy3,&p);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p FCONE FCONE);
+       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy2,&p,sampcov[g],&p,&beta,dummy3,&p FCONE FCONE);
         for(i=0; i<p; i++) {
             sum[g] += dummy3[i*p + i]/(double)p;
             lam[g] += dummy3[i*p + i]/(double)p;
@@ -973,10 +977,10 @@ void msVVE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
             B[g][i*p+i] = lam[g]*Ak[i + g*p];
 
     for(g=0; g<G; g++) {
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p);
-       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,C[g],&p,&beta,dummy3,&p);
-       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,D6,&p,&beta,dummy4,&p);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,B[g],&p,&beta,dummy1,&p FCONE FCONE);
+       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,D6,&p,C[g],&p,&beta,dummy3,&p FCONE FCONE);
+       dgemm_(&notrans,&trans,&p,&p,&p,&alpha,dummy3,&p,D6,&p,&beta,dummy4,&p FCONE FCONE);
         for(i=0; i<p*p; i++) {
             Sigma[g][i] = dummy2[i];
             invSigma[g][i] = dummy4[i];
@@ -1046,8 +1050,8 @@ void newD3MM(double *D, int p, int G, double **Wk, double *Ak, double *xk1) {
             B[g][i*p+i] = (double)1.0/Ak[i + g*p];
 
     for(g=0; g<G; g++){ 
-        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,B[g],&p,D,&p,&beta,dummy1,&p);
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,Wk[g],&p,&beta,dummy2,&p);
+        dgemm_(&notrans,&trans,&p,&p,&p,&alpha,B[g],&p,D,&p,&beta,dummy1,&p FCONE FCONE);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,Wk[g],&p,&beta,dummy2,&p FCONE FCONE);
         eigen(p, Wk1[g], wr, EWk[g]);
         lambda[g] = wr[0];
         for(i=0; i<p*p; i++){
@@ -1058,7 +1062,7 @@ void newD3MM(double *D, int p, int G, double **Wk, double *Ak, double *xk1) {
         for(j=0;j<p;j++) 
             z1[i+p*j] = z[i*p+j];
     svd1(p, p, z, s, u, vtt);
-    dgemm_(&notrans,&trans,&p,&p,&p,&alpha,vtt,&p,u,&p,&beta,xk1,&p);
+    dgemm_(&notrans,&trans,&p,&p,&p,&alpha,vtt,&p,u,&p,&beta,xk1,&p FCONE FCONE);
 
      for(g=0; g<G; g++) { 
          free(B[g]);
@@ -1123,14 +1127,14 @@ void newD4MM(double *xk1, int p, int G, double **Wk, double *Ak, double *xk2) {
         lambda[g] = maxi(C, p, loc);
     }
     for(g=0; g<G; g++){ 
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,Wk[g],&p,xk1,&p,&beta,dummy1,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,B[g],&p,&beta,dummy2,&p);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,Wk[g],&p,xk1,&p,&beta,dummy1,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,B[g],&p,&beta,dummy2,&p FCONE FCONE);
        for(i=0; i<p*p; i++){
            z[i] = z[i] +dummy2[i] - lambda[g]*dummy1[i];
        }
   }
     svd1(p, p, z, s, u, vtt);
-    dgemm_(&notrans,&trans,&p,&p,&p,&alpha,vtt,&p,u,&p,&beta,xk,&p);
+    dgemm_(&notrans,&trans,&p,&p,&p,&alpha,vtt,&p,u,&p,&beta,xk,&p FCONE FCONE);
     for(i=0; i<p; i++)
         for(j=0; j<p; j++)
             xk2[i + p*j] = xk[i*p + j];
@@ -1141,8 +1145,8 @@ for(i=0;i<p;i++){
    }
  }
     
-    dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,vtt,&p,vttt,&p,&beta,dummy1,&p);
-    dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,ut,&p,u,&p,&beta,dummy2,&p);
+    dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,vtt,&p,vttt,&p,&beta,dummy1,&p FCONE FCONE);
+    dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,ut,&p,u,&p,&beta,dummy2,&p FCONE FCONE);
 //    printmx(dummy1,p,p);
 //    printmx(dummy2,p,p);
 
@@ -1188,9 +1192,9 @@ double  testval(double *D6, int p, int G, double **Wk, double *Ak) {
             B[g][i*p+i] = (double)1.0/Ak[i + g*p];
     for(g=0; g<G; g++){ 
        sum[g] = 0.0;
-       dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D6,&p,Wk[g],&p,&beta,dummy1,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p);
-       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy2,&p,B[g],&p,&beta,dummy3,&p);
+       dgemm_(&trans,&notrans,&p,&p,&p,&alpha,D6,&p,Wk[g],&p,&beta,dummy1,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy1,&p,D6,&p,&beta,dummy2,&p FCONE FCONE);
+       dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,dummy2,&p,B[g],&p,&beta,dummy3,&p FCONE FCONE);
         for(i=0; i<p; i++) {
             sum[g] += dummy3[i*p + i];
         }
@@ -1333,7 +1337,7 @@ void msVEE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     for(g=0; g<G; g++)  
         lam[g] = 0.0;
     for(g=0; g<G; g++) { 
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,sampcov[g],&p,invC,&p,&beta,dummy1,&p);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,sampcov[g],&p,invC,&p,&beta,dummy1,&p FCONE FCONE);
         for(i=0; i<p; i++) {
             lam[g] += dummy1[i*p + i]; 
         }
@@ -1369,7 +1373,7 @@ void msVEE (int p, double pi[], int G, double **sampcov, double **Sigma, double 
     for(g=0; g<G; g++)  
         lam[g] = 0.0;
     for(g=0; g<G; g++) { 
-        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,sampcov[g],&p,invC,&p,&beta,dummy1,&p);
+        dgemm_(&notrans,&notrans,&p,&p,&p,&alpha,sampcov[g],&p,invC,&p,&beta,dummy1,&p FCONE FCONE);
         for(i=0; i<p; i++) {
             lam[g] += dummy1[i*p + i]; 
         }
@@ -1844,11 +1848,11 @@ void svd(int M, int N, double *A, double *s, double *u, double *vtt) {
         double vt[LDVT*N];
         lwork = -1;
         dgesdd_( "Singular vectors", &m, &n, A, &lda, s, u, &ldu, vt, &ldvt, &wkopt,
-        &lwork, iwork, &info );
+        &lwork, iwork, &info FCONE );
         lwork = (int)wkopt;
         work = (double*)malloc( lwork*sizeof(double) );
         dgesdd_( "Singular vectors", &m, &n, A, &lda, s, u, &ldu, vt, &ldvt, work,
-        &lwork, iwork, &info );
+        &lwork, iwork, &info FCONE );
 //        if( info > 0 ) {
 //                Rprintf( "The algorithm computing SVD failed to converge.\n" );
 //          }
@@ -1884,11 +1888,11 @@ void svd1(int M, int N, double *A, double *s, double *u, double *vtt) {
         double vt[LDVT*N];
         lwork = -1;
         dgesvd_( "All", "All", &m, &n, A, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork,
-         &info );
+         &info FCONE FCONE);
         lwork = (int)wkopt;
         work = (double*)malloc( lwork*sizeof(double) );
         dgesvd_( "All", "All", &m, &n, A, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
-         &info );
+         &info FCONE FCONE);
 //        if( info > 0 ) {
 //                Rprintf( "The algorithm computing SVD failed to converge.\n" );
 //                exit( 1 );
@@ -1921,12 +1925,12 @@ void eigen(int N, double *A, double *wr, double *vr) {
     /* Query and allocate the optimal workspace */
      lwork = -1;
      dgeev_( "Vectors", "Vectors", &N, A, &lda, wr, wi, vl, &ldvl, vr, &ldvr,
-     &wkopt, &lwork, &info );
+     &wkopt, &lwork, &info FCONE FCONE);
      lwork = (int)wkopt;
      work = (double*)malloc( lwork*sizeof(double) );
      /* Solve eigenproblem */
      dgeev_( "Vectors", "Vectors", &N, A, &lda, wr, wi, vl, &ldvl, vr, &ldvr,
-     work, &lwork, &info );
+     work, &lwork, &info FCONE FCONE);
       /* Check for convergence */
 //        if( info > 0 ) {
 //                Rprintf( "The algorithm failed to compute eigenvalues.\n" );
